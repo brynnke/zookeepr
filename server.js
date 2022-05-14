@@ -1,6 +1,6 @@
 const { animals } = require('./data/animals');
 const express = require('express');
-const port = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001;
 const app = express();
 
 function filterByQuery(query, animalsArray) {
@@ -42,12 +42,19 @@ function filterByQuery(query, animalsArray) {
   return filteredResults;
 }
 
-app.get('/api/animals', (req,res) => {
-    let results = animals;
-    if (req.query){
-        results = filterByQuery(req.query, results);
+function findById(id, animalsArray) {
+  const result = animalsArray.filter(animal => animal.id === id)[0];
+  return result;
+}
+
+app.get('/api/animals/:id', (req, res) => {
+  const result = findById(req.params.id, animals);
+    res.json(result);
+    if (result) {
+      res.json(result);
+    } else {
+      res.send(404);
     }
-    res.json(results);
 });
 
 app.listen(PORT, () =>{
